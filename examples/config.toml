@@ -1,5 +1,5 @@
 app_name = "test"
 
-[httpserver]
+[web]
     addr = ":55078"
     max_upload_size = 1024

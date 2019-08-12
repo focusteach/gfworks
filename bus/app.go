@@ -3,6 +3,7 @@ package bus
 import (
 	"context"
 	"log"
+	"sync"
 
 	// "log"
 	"os"
@@ -15,11 +16,19 @@ import (
 // Application Application
 type Application struct {
 	tasks []app.IAppTask
+	quit  chan os.Signal
 }
 
-// New new a applicaiton
-func New() *Application {
-	return &Application{}
+var singleton *Application
+var once sync.Once
+
+//GetInstance 用于获取单例模式对象
+func GetInstance() *Application {
+	once.Do(func() {
+		singleton = &Application{}
+	})
+
+	return singleton
 }
 
 // AddTask add application level task
@@ -35,9 +44,9 @@ func (app *Application) AddTask(task app.IAppTask) {
 func (app *Application) Exec() {
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 5 seconds.
-	quit := make(chan os.Signal)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
+	app.quit = make(chan os.Signal)
+	signal.Notify(app.quit, os.Interrupt)
+	<-app.quit
 	log.Println("Shutdown Servers ...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -50,4 +59,9 @@ func (app *Application) Exec() {
 	}
 
 	log.Println("Server exiting")
+}
+
+// Quit force quit
+func (app *Application) Quit() {
+	app.quit <- os.Kill
 }

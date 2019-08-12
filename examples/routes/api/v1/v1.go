@@ -1,22 +1,32 @@
-package main
+package v1
 
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
+	"github.com/focusteach/gfworks/examples/model"
 	"github.com/gin-gonic/gin"
-	"github.com/focusteach/gfworks/server/web"
 )
 
-func initRoutes(s web.Engine) {
-	s.Router.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Welcome Gin Server")
-	})
+// GetTopFaces 获取指定的人脸头像数据.
+func GetTopFaces(c *gin.Context) {
+	top := c.DefaultQuery("top", "10")
+	var faces model.Faces
 
-	s.Router.Group("/api").POST("/upload", onUpload)
+	ntop, _ := strconv.Atoi(top)
+
+	faces.Top = ntop
+	for i := 0; i < ntop; i++ {
+		faces.Faces = append(faces.Faces, model.Face{
+			FaceID:   strconv.Itoa(i),
+			FaceName: "t1",
+		})
+	}
+	c.JSON(0, faces)
 }
 
-func onUpload(c *gin.Context) {
+func Upload(c *gin.Context) {
 	name := c.PostForm("name")
 	email := c.PostForm("email")
 
