@@ -1,0 +1,7 @@
+{
+    "AppName": "test",
+    "HttpServer": {
+        "Addr": ":55089",
+        "MaxUploadSize": 1024
+    }
+}

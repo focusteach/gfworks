@@ -12,8 +12,11 @@ import (
 var Config web.Conf
 
 func main() {
-	err := conf.Load(&Config, "web.toml")
+	conf.Init(true, true)
+	err := conf.Load(&Config, "web.yaml")
+
 	fmt.Printf("config: %#v, ret:%v.\n", Config, err)
+
 	app := bus.GetInstance()
 	webserver := web.New(Config)
 

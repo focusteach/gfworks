@@ -1,0 +1,5 @@
+AppName = "test"
+
+[HttpServer]
+    Addr = ":55078"
+    MaxUploadSize = 1024

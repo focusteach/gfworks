@@ -1,0 +1,4 @@
+appname: test
+httpserver:
+  addr: :55099
+  maxuploadsize: 2048

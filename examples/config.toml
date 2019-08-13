@@ -1,5 +1,0 @@
-app_name = "test"
-
-[web]
-    addr = ":55078"
-    max_upload_size = 1024
