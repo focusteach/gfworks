@@ -1,4 +1,5 @@
-appname: test
+appname: gftest
 httpserver:
+  mode: release
   addr: :55099
   maxuploadsize: 2048
