@@ -13,14 +13,20 @@ import (
 	"github.com/focusteach/gfworks/app"
 )
 
+var (
+	singleton *Application
+	once      sync.Once
+)
+
+func init() {
+
+}
+
 // Application Application
 type Application struct {
 	tasks []app.IAppTask
 	quit  chan os.Signal
 }
-
-var singleton *Application
-var once sync.Once
 
 //GetInstance 用于获取单例模式对象
 func GetInstance() *Application {

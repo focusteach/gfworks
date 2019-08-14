@@ -15,11 +15,7 @@ import (
 
 // Conf server configs
 type Conf struct {
-	AppName string `default:"gftest"`
-	Log     struct {
-		OutDir   string `default:"."`
-		FileName string `default:"web.log"`
-	}
+	AppName    string `default:"gftest"`
 	HttpServer struct {
 		Mode          string `default:"release"`
 		Addr          string `default:"0.0.0.0:80"`
@@ -42,13 +38,9 @@ func New(conf Conf) *Engine {
 
 	gin.SetMode(conf.HttpServer.Mode)
 
+	var err error
 	// Logging to a file.
-	logFilePath := filepath.Join(conf.Log.OutDir, conf.AppName)
-	err := os.MkdirAll(logFilePath, 0777)
-	if err != nil {
-		log.Infof("err:%+v", err)
-	}
-	logFilePath = filepath.Join(conf.Log.OutDir, conf.AppName, conf.Log.FileName)
+	logFilePath := filepath.Join(log.Dir(), conf.AppName+"-web.log")
 	engine.logFile, err = os.Create(logFilePath)
 	if err != nil {
 		log.Infof("err:%+v", err)

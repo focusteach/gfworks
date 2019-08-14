@@ -8,18 +8,16 @@ import (
 	"github.com/focusteach/gfworks/server/web"
 )
 
-var Config web.Conf
-
 func main() {
-	conf.Init(false, false)
-	err := conf.Load(&Config, "web.yaml")
-
-	// fmt.Printf("config: %#v, ret:%v.\n", Config, err)
-
-	log.Infof("config: %#v, ret:%v.\n", Config, err)
-
 	app := bus.GetInstance()
-	webserver := web.New(Config)
+
+	conf.Init(false, false)
+	var config web.Conf
+	err := conf.Load(&config, "web.yaml")
+
+	log.Infof("config: %#v, ret:%v.\n", config, err)
+
+	webserver := web.New(config)
 
 	routes.InitRouter(*webserver)
 	app.AddTask(webserver)

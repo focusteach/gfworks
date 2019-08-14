@@ -1,9 +1,22 @@
 package conf
 
-import "github.com/jinzhu/configor"
+import (
+	"flag"
+	"log"
+	"os"
+	"path/filepath"
+
+	"github.com/jinzhu/configor"
+)
+
+var confPath string
 
 func init() {
+	flag.StringVar(&confPath, "conf", "./configs", "default config path")
 
+	if err := os.MkdirAll(confPath, 0777); err != nil {
+		log.Fatalf("conf path make failed.err：%+v", err)
+	}
 }
 
 var configInstance *configor.Configor
@@ -18,5 +31,5 @@ func Load(config interface{}, filename string) error {
 	if configInstance == nil {
 		Init(false, false)
 	}
-	return configInstance.Load(config, filename)
+	return configInstance.Load(config, filepath.Join(confPath, filename))
 }
