@@ -42,7 +42,11 @@ func (app *Application) AddTask(task app.IAppTask) {
 	app.tasks = append(app.tasks, task)
 
 	go func() {
-		task.Start()
+		err := task.Start()
+		if err != nil {
+			log.Fatalf("%s Start error:%+v", task.Name(), err)
+			panic(err)
+		}
 	}()
 }
 

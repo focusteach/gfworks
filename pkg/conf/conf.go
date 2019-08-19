@@ -26,6 +26,11 @@ func Init(debug bool, verbose bool) {
 	configInstance = configor.New(&configor.Config{Debug: debug, Verbose: verbose})
 }
 
+// Dir conf path
+func Dir() string {
+	return confPath
+}
+
 // Load load configs from fileßßß
 func Load(config interface{}, filename string) error {
 	if configInstance == nil {
