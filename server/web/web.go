@@ -2,14 +2,9 @@ package web
 
 import (
 	"context"
-	"fmt"
-	"io"
 	"net/http"
-	"os"
-	"path/filepath"
 	"time"
-
-	"github.com/focusteach/gfworks/pkg/log"
+	"github.com/focusteach/gfworks/pkg/logmgr"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,7 +23,34 @@ type Engine struct {
 	Router  *gin.Engine
 	conf    *Conf
 	srv     *http.Server
-	logFile *os.File
+	logName string
+}
+
+func accessLog() gin.HandlerFunc {
+
+	return func(c *gin.Context) {
+		// 开始时间
+		start := time.Now()
+		// 处理请求
+		c.Next()
+		// 结束时间
+		end := time.Now()
+		//执行时间
+		latency := end.Sub(start)
+
+		path := c.Request.URL.Path
+
+		clientIP := c.ClientIP()
+		method := c.Request.Method
+		statusCode := c.Writer.Status()
+		// 这里是指定日志打印出来的格式。分别是状态码，执行时间,请求ip,请求方法,请求路由(等下我会截图)
+		logmgr.Logf("access",logmgr.InfoLevel, "| %3d | %13v | %15s | %s  %s |",
+			statusCode,
+			latency,
+			clientIP,
+			method, path,
+		)
+	}
 }
 
 // New new a server
@@ -38,32 +60,11 @@ func New(conf Conf) *Engine {
 
 	gin.SetMode(conf.HttpServer.Mode)
 
-	var err error
-	// Logging to a file.
-	logFilePath := filepath.Join(log.Dir(), conf.AppName+"-web.log")
-	engine.logFile, err = os.Create(logFilePath)
-	if err != nil {
-		log.Infof("err:%+v", err)
-	}
-	gin.DefaultWriter = io.MultiWriter(engine.logFile)
-
 	engine.Router = gin.Default()
 
-	engine.Router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
+	// 日志打印
+	engine.Router.Use(accessLog())
 
-		// your custom format
-		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
-			param.ClientIP,
-			param.TimeStamp.Format(time.RFC1123),
-			param.Method,
-			param.Path,
-			param.Request.Proto,
-			param.StatusCode,
-			param.Latency,
-			param.Request.UserAgent(),
-			param.ErrorMessage,
-		)
-	}))
 	engine.Router.Use(gin.Recovery())
 
 	engine.Router.MaxMultipartMemory = conf.HttpServer.MaxUploadSize // 8 MiB
@@ -85,7 +86,7 @@ func (engine *Engine) Start() error {
 
 	// service connections
 	if err := engine.srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		log.Infof("listen: %s\n", err)
+		logmgr.Logf("", logmgr.InfoLevel, "listen: %s\n", err)
 		return err
 	}
 
@@ -94,6 +95,5 @@ func (engine *Engine) Start() error {
 
 // Shutdown shutdown
 func (engine *Engine) Shutdown(ctx context.Context) error {
-	defer engine.logFile.Close()
 	return engine.srv.Shutdown(ctx)
 }

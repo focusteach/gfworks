@@ -4,7 +4,7 @@ import (
 	"github.com/focusteach/gfworks/bus"
 	"github.com/focusteach/gfworks/examples/routes"
 	"github.com/focusteach/gfworks/pkg/conf"
-	"github.com/focusteach/gfworks/pkg/log"
+	"github.com/focusteach/gfworks/pkg/logmgr"
 	"github.com/focusteach/gfworks/server/web"
 )
 
@@ -15,7 +15,9 @@ func main() {
 	var config web.Conf
 	err := conf.Load(&config, "web.yaml")
 
-	log.Infof("config: %#v, ret:%v.\n", config, err)
+	logmgr.Logf("", logmgr.InfoLevel, "start: %#v,", "hello")
+
+	logmgr.Logf("", logmgr.InfoLevel, "config: %#v, ret:%v.\n", config, err)
 
 	webserver := web.New(config)
 

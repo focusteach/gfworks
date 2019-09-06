@@ -12,3 +12,4 @@
 *.out
 examples/examples
 .DS_Store
+*.log

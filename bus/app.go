@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/focusteach/gfworks/app"
+	"github.com/focusteach/gfworks/pkg/logmgr"
 )
 
 var (
@@ -57,7 +58,8 @@ func (app *Application) Exec() {
 	app.quit = make(chan os.Signal)
 	signal.Notify(app.quit, os.Interrupt)
 	<-app.quit
-	log.Println("Shutdown Servers ...")
+
+	logmgr.Logln("", logmgr.InfoLevel, "Shutdown Servers")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -65,10 +67,11 @@ func (app *Application) Exec() {
 	for _, task := range app.tasks {
 		if err := task.Shutdown(ctx); err != nil {
 			log.Fatal("Server Shutdown:", err)
+			logmgr.Logf("", logmgr.InfoLevel, "Server Shutdown error:%+v", err)
 		}
 	}
 
-	log.Println("Server exiting")
+	logmgr.Logln("", logmgr.InfoLevel, "Server exiting")
 }
 
 // Quit force quit

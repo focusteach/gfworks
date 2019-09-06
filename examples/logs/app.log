@@ -1,1 +1,1 @@
-{"level":"info","msg":"config: web.Conf{AppName:\"gftest\", HttpServer:struct { Mode string \"default:\\\"release\\\"\"; Addr string \"default:\\\"0.0.0.0:80\\\"\"; MaxUploadSize int64 \"default:\\\"8388608\\\"\" }{Mode:\"release\", Addr:\":55099\", MaxUploadSize:2048}}, ret:\u003cnil\u003e.\n","time":"2019-08-14T10:51:37+08:00"}
+/Users/wuxiaojian/Documents/GitHub/gfworks/examples/logs/app.log.2019-09-06-00-00.log
