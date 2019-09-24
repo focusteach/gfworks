@@ -45,8 +45,9 @@ func (app *Application) AddTask(task app.IAppTask) {
 	go func() {
 		err := task.Start()
 		if err != nil {
-			log.Fatalf("%s Start error:%+v", task.Name(), err)
-			panic(err)
+			logmgr.Logf("", logmgr.ErrorLevel, "%s Start error:%+v", task.Name(), err)
+			// panic(err)
+			os.Exit(500)
 		}
 	}()
 }
